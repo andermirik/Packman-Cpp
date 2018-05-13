@@ -59,9 +59,10 @@ char** uploadArrayFromFile(char*file, int FieldHeight, int FieldWidth) {
 	for (int i = 0; i < FieldHeight; i++) {
 		for (int j = 0; j < FieldWidth; j++) {
 			fin.get(temp);
-			if (temp != '\n')
+			if (temp != '\n') 
 				arr[i][j] = temp;
 			else j--;
+			
 		}
 
 	}
@@ -291,22 +292,36 @@ public:
 		//goCursorTo(0, HEIGHT);
 	}
 };
-
+bool checkwin(char**map) {
+	for (int i = 0; i < HEIGHT; i++) {
+		for (int j = 0; j < WIDTH; j++) {
+			if (map[i][j] == 'o')
+				return false;
+		}
+	}
+	return true;
+}
 
 void main() {
 	SetColor(White, Black);
+	
+
 	system("chcp 1251");
+	system("mode con:cols=27 lines=18");
 	system("cls");
 	hideCursor();
 	char**map = uploadArrayFromFile("Field.txt", HEIGHT, WIDTH);
 	print(map, HEIGHT, WIDTH);
 	Road* road = NULL;
 	Character hero(1,1,'C', Yellow);
-	Character ghost(15, 15, 'W', LightCyan);
+	Character ghost(14, 15, 'W', LightCyan);
+	Character ghost2(2, 15, 'W', LightGray);
+	Character ghost3(19, 3, 'W', Magenta);
 	float counter = 0;
+	bool win = false;
 	while (hero.isAlive) {
 
-		if (_kbhit()) {
+		if (_kbhit() &&!win) {
 			char c = _getch();
 			int offsetX = 0;
 			int offsetY = 0;
@@ -329,10 +344,27 @@ void main() {
 					road = RoadFromAtoB(map, HEIGHT, WIDTH, Point(ghost.x, ghost.y), Point(hero.x, hero.y));
 					if (road != NULL) {
 						ghost.moveTo(road->road[road->length - 2].x, road->road[road->length - 2].y);
-						if (ghost.x == hero.x &&ghost.y == hero.y)
-							hero.isAlive = false;
+					}
+					if (road)
+						delete road;
+					road = RoadFromAtoB(map, HEIGHT, WIDTH, Point(ghost2.x, ghost2.y), Point(hero.x, hero.y));
+					if (road != NULL) {
+						ghost2.moveTo(road->road[road->length - 2].x, road->road[road->length - 2].y);
+						
+					}
+					if (road)
+						delete road;
+					road = RoadFromAtoB(map, HEIGHT, WIDTH, Point(ghost3.x, ghost3.y), Point(hero.x, hero.y));
+					if (road != NULL) {
+						ghost3.moveTo(road->road[road->length - 2].x, road->road[road->length - 2].y);
 					}
 				}
+				if (ghost.x == hero.x &&ghost.y == hero.y)
+					hero.isAlive = false;
+				if (ghost2.x == hero.x &&ghost2.y == hero.y)
+					hero.isAlive = false;
+				if (ghost3.x == hero.x &&ghost3.y == hero.y)
+					hero.isAlive = false;
 			}
 
 			fflush(stdin);
@@ -341,9 +373,21 @@ void main() {
 		
 		hero.draw();
 		ghost.draw();
+		ghost2.draw();
+		ghost3.draw();
+		win = checkwin(map);
+		if (win) {
+			SetColor(LightGreen, Black);
+			goCursorTo(20, 15);
+			cout << "YOU WIN";
+			SetColor(White, Black);
+		}
 		Sleep(10);
 	}
-	
+	SetColor(LightRed, Black);
+	goCursorTo(19, 15);
+	cout << "YOU LOST";
+	SetColor(White, Black);
 	
 
 	system("pause>nul");
