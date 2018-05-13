@@ -304,10 +304,15 @@ bool checkwin(char**map) {
 
 void main() {
 	SetColor(White, Black);
-	
-
+	setlocale(0, "rus");
 	system("chcp 1251");
 	system("mode con:cols=27 lines=18");
+	system("cls");
+	cout << "введите сложность:\n4:hard\n3:normal\n2:easy\n";
+		int mode = 4;//4 hard 3 normal 2 easy
+	cin >> mode;///сделать волшебные €годки
+	if (mode != 2 && mode != 3 && mode != 4)
+		mode = 4;
 	system("cls");
 	hideCursor();
 	char**map = uploadArrayFromFile("Field.txt", HEIGHT, WIDTH);
@@ -317,7 +322,7 @@ void main() {
 	Character ghost(14, 15, 'W', LightCyan);
 	Character ghost2(2, 15, 'W', LightGray);
 	Character ghost3(19, 3, 'W', Magenta);
-	float counter = 0;
+	int counter = 0;
 	bool win = false;
 	while (hero.isAlive) {
 
@@ -336,9 +341,8 @@ void main() {
 
 			if (symbolOnPosition(hero.x + offsetX, hero.y + offsetY) != '#'&& (offsetX!=0 || offsetY!=0)) {
 				hero.moveTo(hero.x + offsetX, hero.y + offsetY);
-				counter += 0.8;
-				if (counter >= 1.5) {
-					counter = 0;
+				counter += 1;//1 2 3 4
+				if (counter % mode <(mode-1)) {//+ + -
 					if (road)
 						delete road;
 					road = RoadFromAtoB(map, HEIGHT, WIDTH, Point(ghost.x, ghost.y), Point(hero.x, hero.y));
@@ -378,7 +382,7 @@ void main() {
 		win = checkwin(map);
 		if (win) {
 			SetColor(LightGreen, Black);
-			goCursorTo(20, 15);
+			goCursorTo(19, 15);
 			cout << "YOU WIN";
 			SetColor(White, Black);
 		}
