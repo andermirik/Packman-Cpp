@@ -295,7 +295,7 @@ public:
 bool checkwin(char**map) {
 	for (int i = 0; i < HEIGHT; i++) {
 		for (int j = 0; j < WIDTH; j++) {
-			if (map[i][j] == 'o')
+			if (symbolOnPosition(j,i) == 'o')
 				return false;
 		}
 	}
